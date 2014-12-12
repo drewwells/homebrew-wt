@@ -10,9 +10,7 @@ class Wellington < Formula
   option :cxx11
 
   depends_on "go" => :build
-  depends_on "autoconf" => :build
-  depends_on "automake" => :build
-  depends_on "libtool" => :build
+  depends_on "pkgconfig" => :build
 
   go_resource "github.com/wellington/spritewell" do
     url "http://github.com/wellington/spritewell.git",
@@ -24,6 +22,7 @@ class Wellington < Formula
     mkdir_p buildpath/"src/github.com/wellington"
     ln_s buildpath, buildpath/"src/github.com/wellington/wellington"
     Language::Go.stage_deps resources, buildpath/"src"
+    ENV["PKG_CONFIG_PATH"] = "/usr/local/lib/pkgconfig"
     ENV["GOPATH"] = buildpath
 
     system "go", "build", "-o", "dist/wt", "wt/main.go"
