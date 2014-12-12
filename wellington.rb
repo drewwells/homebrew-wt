@@ -4,7 +4,7 @@ require "language/go"
 class Wellington < Formula
   homepage "https://github.com/wellington/wellington"
   url "https://github.com/wellington/wellington/archive/f1ef09a7b86e5c96aabe52e76513baa02e929cc7.tar.gz"
-  sha1 "a5aa2866bcb914fd40542089628d5604de85c207"
+  sha1 "90dcae87a3dccd675505b2f23ad47b2ce31fa8fb"
   head "https://github.com/wellington/wellington.git"
 
   option :cxx11
