@@ -3,7 +3,7 @@ require "language/go"
 
 class Wellington < Formula
   homepage "https://github.com/wellington/wellington"
-  url "https://github.com/wellington/wellington/archive/61a7f17b9612ec552a18d51c8e5dee307e323743.tar.gz"
+  url "https://github.com/wellington/wellington/archive/e892483423eceb3196c02b9671cb6a36dd364aab.tar.gz"
   #sha1 "c3abd876e209c00a7563866e07028db359a8d4f6"
   head "https://github.com/wellington/wellington.git"
 
