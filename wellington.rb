@@ -3,7 +3,7 @@ require "language/go"
 
 class Wellington < Formula
   homepage "https://github.com/wellington/wellington"
-  url "https://github.com/wellington/wellington/archive/e892483423eceb3196c02b9671cb6a36dd364aab.tar.gz"
+  url "https://github.com/wellington/wellington/archive/61a7f17b9612ec552a18d51c8e5dee307e323743.tar.gz"
   #sha1 "c3abd876e209c00a7563866e07028db359a8d4f6"
   head "https://github.com/wellington/wellington.git"
 
@@ -35,14 +35,14 @@ class Wellington < Formula
   def install
     resource("github.com/sass/libsass").stage {
       ENV["LIBSASS_VERSION"]="705e6d"
-      system "autoreconf", "-fvi"
-      system "./configure", "--prefix=#{buildpath}/libsass",
-             "--enable-static",
+      system "autoreconf", "--force", "--install"
+      system "./configure",
+             "--disable-tests",
+             "--disable-shared",
+             "--prefix=#{buildpath}/libsass",
              "--disable-silent-rules",
              "--disable-dependency-tracking"
       system "make", "install"
-      # dylibs will be used if found, remove them to force static binding
-      rm Dir.glob("#{buildpath}/libsass/lib/*dylib")
     }
     # go_resource doesn't support gopkg, do it manually then symlink
     mkdir_p buildpath/"src/gopkg.in"
