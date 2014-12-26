@@ -3,8 +3,8 @@ require "language/go"
 
 class Wellington < Formula
   homepage "https://github.com/wellington/wellington"
-  url "https://github.com/wellington/wellington/archive/61a7f17b9612ec552a18d51c8e5dee307e323743.tar.gz"
-  #sha1 "c3abd876e209c00a7563866e07028db359a8d4f6"
+  url "https://github.com/wellington/wellington/archive/v0.5.0.tar.gz"
+  sha1 "5c02719c6a190dcea1461afd45371f3e399fa6e9"
   head "https://github.com/wellington/wellington.git"
 
   needs :cxx11
@@ -18,23 +18,22 @@ class Wellington < Formula
   go_resource "github.com/wellington/spritewell" do
     url "https://github.com/wellington/spritewell.git",
         :revision => "3a43f26d94a6da8e40884d1edca0ff372ab7487d"
-    sha1 ""
   end
 
   go_resource "github.com/go-fsnotify/fsnotify" do
     url "https://github.com/go-fsnotify/fsnotify.git",
         :revision => "f582d920d11386e8ae15227bb5933a8f9b4c3dec"
-    sha1 "2bd8459d120337ad68cb119b6761130c2e07d053"
   end
 
   resource "github.com/sass/libsass" do
-    url "https://github.com/sass/libsass.git"
-    sha1 "705e6dc406229571ee992e83b797fb4abbecb826"
+    url "https://github.com/sass/libsass.git",
+        :revision => "9852e41a11f16e8d52992a0f6e4d08068e9cd0ad"
   end
 
   def install
+    ENV.cxx11
     resource("github.com/sass/libsass").stage {
-      ENV["LIBSASS_VERSION"]="705e6d"
+      ENV["LIBSASS_VERSION"]="9852e41a11f16e8d52992a0f6e4d08068e9cd0ad"
       system "autoreconf", "--force", "--install"
       system "./configure",
              "--disable-tests",
@@ -52,20 +51,19 @@ class Wellington < Formula
     ln_s buildpath, buildpath/"src/github.com/wellington/wellington"
     Language::Go.stage_deps resources, buildpath/"src"
     ENV["GOPATH"] = buildpath
+    ENV.append 'CGO_LDFLAGS', '-stdlib=libc++' if ENV.compiler == :clang
+    system "go", "build", "-x", "-v", "-o", "dist/wt", "wt/main.go"
 
-    system "go", "build", "-o", "dist/wt", "wt/main.go"
     bin.install "dist/wt"
   end
 
   test do
-    path = testpath/"file.scss"
-    path.write "div { p { color: red; }}"
+    s = 'div { p { color: red; } }'
     expected = <<-EOS.undent
-      /* line 6, stdin */
       div p {
         color: red; }
     EOS
-    output = `#{bin}/wt #{path}`
+    output = `echo '#{s}' | #{bin}/wt`
     assert_equal(expected, output)
   end
 end
