@@ -3,8 +3,8 @@ require "language/go"
 
 class Wellington < Formula
   homepage "https://github.com/wellington/wellington"
-  url "https://github.com/wellington/wellington/archive/v0.5.0.tar.gz"
-  sha1 "5c02719c6a190dcea1461afd45371f3e399fa6e9"
+  url "https://github.com/wellington/wellington/archive/v0.6.0-alpha1.tar.gz"
+  sha1 "52a5cca3025f922a8f03f92ef947c848160f17ae"
   head "https://github.com/wellington/wellington.git"
 
   needs :cxx11
@@ -17,7 +17,7 @@ class Wellington < Formula
 
   go_resource "github.com/wellington/spritewell" do
     url "https://github.com/wellington/spritewell.git",
-        :revision => "3a43f26d94a6da8e40884d1edca0ff372ab7487d"
+        :revision => "748bfe956f31c257605c304b41a0525a4487d17d"
   end
 
   go_resource "github.com/go-fsnotify/fsnotify" do
@@ -25,15 +25,17 @@ class Wellington < Formula
         :revision => "f582d920d11386e8ae15227bb5933a8f9b4c3dec"
   end
 
+  # The revision must match .libsass_version in the project.
+  # https://github.com/wellington/wellington/blob/master/.libsass_version
   resource "github.com/sass/libsass" do
     url "https://github.com/sass/libsass.git",
-        :revision => "9852e41a11f16e8d52992a0f6e4d08068e9cd0ad"
+        :revision => "3b0feb9f13d5885de9f2ceec81b9a66a76f9be2d"
   end
 
   def install
     ENV.cxx11
     resource("github.com/sass/libsass").stage {
-      ENV["LIBSASS_VERSION"]="9852e41a11f16e8d52992a0f6e4d08068e9cd0ad"
+      ENV["LIBSASS_VERSION"]="3b0feb9f13d5885de9f2ceec81b9a66a76f9be2d"
       system "autoreconf", "--force", "--install"
       system "./configure",
              "--disable-tests",
