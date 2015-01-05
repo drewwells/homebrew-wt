@@ -3,8 +3,8 @@ require "language/go"
 
 class Wellington < Formula
   homepage "https://github.com/wellington/wellington"
-  url "https://github.com/wellington/wellington/archive/v0.6.0-alpha1.tar.gz"
-  sha1 "52a5cca3025f922a8f03f92ef947c848160f17ae"
+  url "https://github.com/wellington/wellington/archive/c99c5d9e34f9a303c12d9d5561febb3455b7acd7.tar.gz"
+  sha1 "6ca9a6e1a9620073becaf1d0bfaf0e6c5043db96"
   head "https://github.com/wellington/wellington.git"
 
   needs :cxx11
@@ -25,35 +25,18 @@ class Wellington < Formula
         :revision => "f582d920d11386e8ae15227bb5933a8f9b4c3dec"
   end
 
-  # The revision must match .libsass_version in the project.
-  # https://github.com/wellington/wellington/blob/master/.libsass_version
-  resource "github.com/sass/libsass" do
-    url "https://github.com/sass/libsass.git",
-        :revision => "3b0feb9f13d5885de9f2ceec81b9a66a76f9be2d"
-  end
-
   def install
     ENV.cxx11
-    resource("github.com/sass/libsass").stage {
-      ENV["LIBSASS_VERSION"]="3b0feb9f13d5885de9f2ceec81b9a66a76f9be2d"
-      system "autoreconf", "--force", "--install"
-      system "./configure",
-             "--disable-tests",
-             "--disable-shared",
-             "--prefix=#{buildpath}/libsass",
-             "--disable-silent-rules",
-             "--disable-dependency-tracking"
-      system "make", "install"
-    }
     # go_resource doesn't support gopkg, do it manually then symlink
     mkdir_p buildpath/"src/gopkg.in"
     ln_s buildpath/"src/github.com/go-fsnotify/fsnotify", buildpath/"src/gopkg.in/fsnotify.v1"
-    ENV.append_path "PKG_CONFIG_PATH", buildpath/"libsass/lib/pkgconfig"
+    ENV["PKG_CONFIG_PATH"] = buildpath/"libsass/lib/pkgconfig"
     mkdir_p buildpath/"src/github.com/wellington"
     ln_s buildpath, buildpath/"src/github.com/wellington/wellington"
     Language::Go.stage_deps resources, buildpath/"src"
     ENV["GOPATH"] = buildpath
     ENV.append 'CGO_LDFLAGS', '-stdlib=libc++' if ENV.compiler == :clang
+    system "make", "deps"
     system "go", "build", "-x", "-v", "-o", "dist/wt", "wt/main.go"
 
     bin.install "dist/wt"
@@ -62,6 +45,8 @@ class Wellington < Formula
   test do
     s = 'div { p { color: red; } }'
     expected = <<-EOS.undent
+      Reading from stdin, -h for help
+      /* line 6, stdin */
       div p {
         color: red; }
     EOS
